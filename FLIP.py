@@ -29,15 +29,15 @@ def headless(directory):
     image_segmentation.process_collection(directory) # new python macro
 
     # getting offsets
-    with open(os.path.join(this_dir, "ps2", "sensor_fixed_metadata.json"), 'r') as f:
+    with open(os.path.join(this_dir, "static", "ps2", "sensor_fixed_metadata.json"), 'r') as f:
         ps2_dict = json.load(f)
         ps2_x = float(ps2_dict[0]['location_in_camera_box_m']['x'])
         ps2_y = float(ps2_dict[0]['location_in_camera_box_m']['y'])
 
     fluorescence_aggregation.generate_aggregate(
         directory, 
-        os.path.join(this_dir, 'Plot boundaries.xlsx'), 
-        os.path.join(this_dir, 'multithresh.json'), 
+        os.path.join(this_dir, "static", 'Plot boundaries.xlsx'),
+        os.path.join(this_dir, "static", 'multithresh.json'),
         ps2_x, 
         ps2_y
     ) # generating aggregates
@@ -104,7 +104,7 @@ def gui():
     image_segmentation_btn.grid(column=1, row=1, sticky="nsew", padx=2, pady=2, ipadx=10, ipady=7)
 
     # getting offsets
-    with open(os.path.join(this_dir, "ps2", "sensor_fixed_metadata.json"), 'r') as f:
+    with open(os.path.join(this_dir, "static", "ps2", "sensor_fixed_metadata.json"), 'r') as f:
         ps2_dict = json.load(f)
         ps2_x = float(ps2_dict[0]['location_in_camera_box_m']['x'])
         ps2_y = float(ps2_dict[0]['location_in_camera_box_m']['y'])
@@ -118,8 +118,8 @@ def gui():
         text="Generate Aggregate and Fluorescence", 
         command=lambda: fluorescence_aggregation.single_process(
             filepath=fd.askdirectory(title="Please select a ps2 collection"),
-            plot_boundaries=os.path.join(this_dir, 'Plot boundaries.xlsx'),
-            multithresh_json=os.path.join(this_dir, 'multithresh.json'),
+            plot_boundaries=os.path.join(this_dir, 'static', 'Plot boundaries.xlsx'),
+            multithresh_json=os.path.join(this_dir, 'static', 'multithresh.json'),
             offset_x=ps2_x, 
             offset_y=ps2_y
         ),

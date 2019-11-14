@@ -11,6 +11,8 @@ import os
 
 import pandas as pd
 
+# getting the directory that this file is running from
+this_dir = os.path.dirname(os.path.abspath(__file__))
 
 def associate_plots(filepath, output_type="", x_offset=0, y_offset=0):
     """generates a csv or json with all image names and 
@@ -60,7 +62,7 @@ def associate_plots(filepath, output_type="", x_offset=0, y_offset=0):
 
         # finding the plot that the folder was taken in
         # reading a file defining plot boundaries
-        plot_boundaries_df = pd.read_excel('Plot boundaries.xlsx')
+        plot_boundaries_df = pd.read_excel(os.path.join(this_dir, "static", 'Plot boundaries.xlsx'))
         plot_boundaries_df = plot_boundaries_df[['Plot', 'X Start', 'X End', 'Y Start', 'Y End']]
 
         plot = plot_boundaries_df.loc[
@@ -159,26 +161,23 @@ def gui():
         value='json',
     ).grid(column=1, row=0)
 
-    # getting the directory that this file is running from
-    this_dir = os.path.dirname(os.path.abspath(__file__))
-
     # getting offsets
-    with open(os.path.join(this_dir, "ps2", "sensor_fixed_metadata.json"), 'r') as f:
+    with open(os.path.join(this_dir, "static", "ps2", "sensor_fixed_metadata.json"), 'r') as f:
         ps2_dict = json.load(f)
         ps2_x = float(ps2_dict[0]['location_in_camera_box_m']['x'])
         ps2_y = float(ps2_dict[0]['location_in_camera_box_m']['y'])
 
-    with open(os.path.join(this_dir, "stereo", "sensor_fixed_metadata.json"), 'r') as f:
+    with open(os.path.join(this_dir, "static", "stereo", "sensor_fixed_metadata.json"), 'r') as f:
         stereo_dict = json.load(f)
         stereo_x = float(stereo_dict[0]['location_in_camera_box_m']['x'])
         stereo_y = float(stereo_dict[0]['location_in_camera_box_m']['y'])
 
-    with open(os.path.join(this_dir, "SWIR", "sensor_fixed_metadata.json"), 'r') as f:
+    with open(os.path.join(this_dir, "static", "SWIR", "sensor_fixed_metadata.json"), 'r') as f:
         swir_dict = json.load(f)
         swir_x = float(swir_dict[0]['location_in_camera_box_m']['x'])
         swir_y = float(swir_dict[0]['location_in_camera_box_m']['y'])
 
-    with open(os.path.join(this_dir, "VNIR", "sensor_fixed_metadata.json"), 'r') as f:
+    with open(os.path.join(this_dir, "static", "VNIR", "sensor_fixed_metadata.json"), 'r') as f:
         vnir_dict = json.load(f)
         vnir_x = float(vnir_dict[0]['location_in_camera_box_m']['x'])
         vnir_y = float(vnir_dict[0]['location_in_camera_box_m']['y'])

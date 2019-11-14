@@ -50,6 +50,8 @@ def convert_dirs(directory, processes=-1):
     with multiprocessing.Pool(multiprocessing.cpu_count()) as p:
         p.map(convert_dir, dirs_to_process)
 
+    print("Finished converting to pngs in", directory)
+
 if __name__ == "__main__":
 
     filepath = r"W:\GeneratedData\F013B2\PS2\Test"

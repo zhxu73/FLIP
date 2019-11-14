@@ -22,6 +22,8 @@ import os
 
 import pandas as pd
 
+# getting the directory that this file is running from
+this_dir = os.path.dirname(os.path.abspath(__file__))
 
 def generate_aggregate(filepath, plot_boundaries_filepath, multithresh_json, offset_x=0, offset_y=0):
     """
@@ -256,9 +258,12 @@ def batch_process(filepath):
     with multiprocessing.Pool(multiprocessing.cpu_count()) as p:
         # starmap lets a function multiprocess on a list of tuples 
         # and each tuple is passed as arguments
+        plot_boundaries_path  = os.path.join(this_dir, "static", "Plot boundaries.xlsx")
+        multithresh_json_path = os.path.join(this_dir, "static", "multithresh.json")
+
         p.starmap(
             generate_aggregate, 
-            [(collection, 'Plot boundaries.xlsx', 'multithresh.json') for collection in colletions_to_process]
+            [(collection, plot_boundaries_path, multithresh_json_path) for collection in colletions_to_process]
         )
 
         p.starmap(
