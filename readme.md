@@ -14,7 +14,7 @@ To set up an evironment open a terminal in the project folder
 
 To run the cli, run `python FLIP.py -d <ps2 collection path>`
 
-This will run through the binary to png conversion, run the python macro, and then generate aggregate and fluorescence files all in one go.
+This will run through the binary to png conversion, run multithreshold image segmentation, and then generate aggregate and fluorescence files all in one go.
 
 #### GUI (graphical user interface)
 
@@ -22,9 +22,9 @@ To open the gui, run `python FLIP.py` with no arguments
 
 `Binary To PNG` button converts all the .bin images in a folder to .png
 
-`ImageJ Macro` button looks at the images generated from the binary to png button and creates a .csv with some calculations. It will ask for the location of the ps2 collection and then the location of an imagej macro
+`ImageJ Macro` button looks at the images generated from the binary to png button and creates a .csv with some calculations. It will try to find an imagej installation in the project folder, but if it can't, it will ask where one is. After that it will ask for the location of an imagej macro to be run
 
-`Python Macro` button looks at the images generated from the binary to png button and creates a .csv with some calculations. It will ask for the location of the ps2 collection
+`Python Macro` button looks at the images generated from the binary to png button and applies multi threshold image segmentation. It will ask for the location of the ps2 collection
 
 `Generate Aggregate and Fluorescence` button generates `{foldername}_aggregated.csv` and `{foldername}_fluorescence.csv` for a collection of ps2 images. Each subfolder in a collection must have the ..._metadata.json file and the {foldername}.csv to be processed.
 

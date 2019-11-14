@@ -120,7 +120,7 @@ def gui():
             filepath=fd.askdirectory(title="Please select a ps2 collection"),
             plot_boundaries=os.path.join(this_dir, 'static', 'Plot boundaries.xlsx'),
             multithresh_json=os.path.join(this_dir, 'static', 'multithresh.json'),
-            offset_x=ps2_x, 
+            offset_x=ps2_x,
             offset_y=ps2_y
         ),
     )
