@@ -4,17 +4,19 @@
 ---
 To set up an evironment open a terminal in the project folder
 
-`python -m venv venv` to create a virtual environment
+`python -m venv venv` to create a virtual environment 
 
 `venv\Scripts\activate` to activate the vm. You should see (venv) at the front of your command line
 
 `pip install -r requirements.txt` to install dependancies into the vm
+<br/><br/>
 
 #### CLI (command line interface)
 
 To run the cli, run `python FLIP.py -d <ps2 collection path>`
 
 This will run through the binary to png conversion, run multithreshold image segmentation, and then generate aggregate and fluorescence files all in one go.
+<br/><br/>
 
 #### GUI (graphical user interface)
 
@@ -27,6 +29,7 @@ To open the gui, run `python FLIP.py` with no arguments
 `Python Macro` button looks at the images generated from the binary to png button and applies multi threshold image segmentation. It will ask for the location of the ps2 collection
 
 `Generate Aggregate and Fluorescence` button generates `{foldername}_aggregated.csv` and `{foldername}_fluorescence.csv` for a collection of ps2 images. Each subfolder in a collection must have the ..._metadata.json file and the {foldername}.csv to be processed.
+<br/><br/>
 
 ```
 2019-08-27/
@@ -48,7 +51,7 @@ To open the gui, run `python FLIP.py` with no arguments
 ---
 ## Associate Plots
 the `associate_plots.py` file will create either a .json or a .csv associating images to their plots based on `Plot boundaries.xlsx`.
-
+<br/><br/>
 
 #### CLI (command line interface)
 
@@ -59,6 +62,7 @@ python associate_plots.py
     -xo <x_offset> (optional. 0 by default)
     -yo <y_offset> (optional. 0 by default)
 ```
+<br/>
 
 #### GUI (graphical user interface)
 
