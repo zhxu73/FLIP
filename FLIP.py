@@ -21,10 +21,19 @@ import image_segmentation
 # getting the directory that this file is running from
 this_dir = os.path.dirname(os.path.abspath(__file__))
 
-def headless(directory):
-    """run the full pipeline on a directory without a gui"""
+def headless(directory, processes=-1):
+    """
+    run the full pipeline on a directory without a gui
+    
+    1. convert bins to pngs
+    2. do image segmentation (this is where the imagej macro 
+        would go, but it has been rewritten)
+    3. get ps2 offsets
+    4. generate aggregate files
+    5. generate fluorescence file 
+    """
 
-    bin_conversion.convert_dirs(directory) # converting all images in a dir from bin to png
+    bin_conversion.convert_dirs(directory, processes=processes) # converting all images in a dir from bin to png
     # imagej_macro(args.macro, args.directory) # old fiji macro
     image_segmentation.process_collection(directory) # new python macro
 
@@ -133,12 +142,17 @@ def gui():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--directory', help="directory to ps2 collection")
+    parser.add_argument('-p', '--processes', help="max spawnable processes used by multiprocessing")
     # parser.add_argument('-m', '--macro', help="filepath to an imagej macro", required=True)
 
     args = parser.parse_args()
 
     # if the user gave command line arguments, then use the cli, else open a gui
     if args.directory:
-        headless(args.directory)
+        # if processes are given, use that, else, use max possible
+        processes = args.processes if args.processes else -1
+
+        headless(args.directory, processes)
+        
     else:
         gui()
