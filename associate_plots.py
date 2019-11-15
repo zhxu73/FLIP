@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 """
 generates a csv or json with all image names and 
 the plots in which they were captured.

@@ -6,4 +6,4 @@ RUN pip install -r requirements.txt
 
 RUN chmod +x /FLIP.py
 
-ENTRYPOINT [ "python", "FLIP.py" ]
+ENTRYPOINT [ "FLIP.py" ]

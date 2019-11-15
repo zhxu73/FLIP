@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 """
 Fluorescence Imaging Pipeline main file
 
@@ -153,6 +155,6 @@ if __name__ == "__main__":
         processes = args.processes if args.processes else -1
 
         headless(args.directory, processes)
-        
+
     else:
         gui()
