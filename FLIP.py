@@ -3,7 +3,7 @@
 """
 Fluorescence Imaging Pipeline main file
 
-Jacob Long
+Jacob Long USDA jacob.long@usda.gov
 2019-11-7
 """
 

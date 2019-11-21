@@ -45,7 +45,7 @@ def generate_aggregate(filepath, plot_boundaries_filepath, multithresh_json, off
         try:
             json_dir = [f for f in files if f.endswith("_metadata.json")][0]
             # csv_dir = [f for f in files if f.endswith(".csv")][0]
-            csv_dir = [f for f in files if f.endswith("_python.csv")][0]
+            csv_dir = [f for f in files if f.endswith(".csv")][0]
                 
         except:
             print(f"Skipping {root}. json or csv not found")

@@ -144,7 +144,7 @@ def process_dir(filepath):
     df = pd.DataFrame(image_dicts)
 
 
-    output_dir = os.path.join(filepath, os.path.basename(filepath) + "_python.csv")
+    output_dir = os.path.join(filepath, os.path.basename(filepath) + ".csv")
     df.to_csv(output_dir)
     print(output_dir, "created")
 
