@@ -149,7 +149,7 @@ def generate_fluorescence(filepath, generate_file=False):
     returns a pandas dataframe
     """
 
-    print("generating fluorescence for", os.path.basename(filepath))
+    print("\ngenerating fluorescence for", os.path.basename(filepath))
 
     # finding the aggregated file
     aggregated_filepath = os.path.join(filepath, os.path.basename(filepath) + "_aggregated.csv")

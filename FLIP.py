@@ -9,11 +9,6 @@ Jacob Long USDA jacob.long@usda.gov
 
 import json
 import os
-import subprocess
-import sys
-import tkinter
-import tkinter.filedialog as fd
-import tkinter.ttk
 
 import bin_conversion
 import fluorescence_aggregation
@@ -34,7 +29,10 @@ def headless(directory, processes=-1):
     5. generate fluorescence file 
     """
 
+    print("Converting bins to pngs")
     bin_conversion.convert_dirs(directory, processes=processes) # converting all images in a dir from bin to png
+
+    print("segmenting image")
     # imagej_macro(args.macro, args.directory) # old fiji macro
     image_segmentation.process_collection(directory) # new python macro
 
@@ -44,6 +42,7 @@ def headless(directory, processes=-1):
         ps2_x = float(ps2_dict[0]['location_in_camera_box_m']['x'])
         ps2_y = float(ps2_dict[0]['location_in_camera_box_m']['y'])
 
+    print("generating aggregates")
     fluorescence_aggregation.generate_aggregate(
         directory, 
         os.path.join(this_dir, "static", 'Plot boundaries.xlsx'),
@@ -59,6 +58,11 @@ def run_imagej_macro():
     """
     runs a command that will call imagej with a specified macro
     """
+
+    import subprocess
+    import tkinter
+    import tkinter.filedialog as fd
+    import tkinter.ttk
 
     # trying to find a local imagej installation, but if one is not found, ask the user where it is
     imagej_path = os.path.join(this_dir, 'Fiji.app/ImageJ-win64.exe')
