@@ -144,7 +144,7 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('directory', help="directory to ps2 collection")
+    parser.add_argument('-d', '--directory', help="directory to ps2 collection")
     parser.add_argument('-p', '--processes', help="max spawnable processes used by multiprocessing")
     # parser.add_argument('-m', '--macro', help="filepath to an imagej macro", required=True)
 

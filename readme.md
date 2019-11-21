@@ -13,7 +13,7 @@ To set up an evironment open a terminal in the project folder
 
 #### CLI (command line interface)
 
-To run the cli, run `python FLIP.py <ps2 collection path>`
+To run the cli, run `python FLIP.py -d <ps2 collection path>`
 
 This will run through the binary to png conversion, run multithreshold image segmentation, and then generate aggregate and fluorescence files all in one go.
 <br/><br/>
