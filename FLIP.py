@@ -9,6 +9,10 @@ Jacob Long USDA jacob.long@usda.gov
 
 import json
 import os
+import subprocess
+import tkinter
+import tkinter.filedialog as fd
+import tkinter.ttk
 
 import bin_conversion
 import fluorescence_aggregation
@@ -59,8 +63,6 @@ def run_imagej_macro():
     runs a command that will call imagej with a specified macro
     """
 
-   
-
     # trying to find a local imagej installation, but if one is not found, ask the user where it is
     imagej_path = os.path.join(this_dir, 'Fiji.app/ImageJ-win64.exe')
     if not os.path.exists(imagej_path):
@@ -80,10 +82,7 @@ def run_imagej_macro():
     ])
 
 def gui():
-    import subprocess
-    import tkinter
-    import tkinter.filedialog as fd
-    import tkinter.ttk
+
 
     # setting up tkinter window
     root = tkinter.Tk()
