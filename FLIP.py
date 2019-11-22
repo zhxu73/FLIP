@@ -59,10 +59,7 @@ def run_imagej_macro():
     runs a command that will call imagej with a specified macro
     """
 
-    import subprocess
-    import tkinter
-    import tkinter.filedialog as fd
-    import tkinter.ttk
+   
 
     # trying to find a local imagej installation, but if one is not found, ask the user where it is
     imagej_path = os.path.join(this_dir, 'Fiji.app/ImageJ-win64.exe')
@@ -83,6 +80,11 @@ def run_imagej_macro():
     ])
 
 def gui():
+    import subprocess
+    import tkinter
+    import tkinter.filedialog as fd
+    import tkinter.ttk
+
     # setting up tkinter window
     root = tkinter.Tk()
     root.title("Generate Fluorescence Aggregates")
