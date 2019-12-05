@@ -10,9 +10,6 @@ Jacob Long USDA jacob.long@usda.gov
 import json
 import os
 import subprocess
-import tkinter
-import tkinter.filedialog as fd
-import tkinter.ttk
 
 import bin_conversion
 import fluorescence_aggregation
@@ -58,31 +55,34 @@ def headless(directory, processes=-1):
 
     print("Finished processing", directory)
 
-def run_imagej_macro():
-    """
-    runs a command that will call imagej with a specified macro
-    """
-
-    # trying to find a local imagej installation, but if one is not found, ask the user where it is
-    imagej_path = os.path.join(this_dir, 'Fiji.app/ImageJ-win64.exe')
-    if not os.path.exists(imagej_path):
-        imagej_path = fd.askopenfilename(title="Could not find imagej, please select your imagej.exe")
-
-    # asking the user where their imagej macro is.
-    macro_path = fd.askopenfilename(title="Please select an imagej macro")
-
-    # if the user cancels either of the selections, return
-    if not macro_path or not imagej_path:
-        return
-
-    subprocess.call([
-        imagej_path,
-        "-macro",
-        macro_path
-    ])
 
 def gui():
+    import tkinter
+    import tkinter.filedialog as fd
+    import tkinter.ttk
 
+    def run_imagej_macro():
+        """
+        runs a command that will call imagej with a specified macro
+        """
+
+        # trying to find a local imagej installation, but if one is not found, ask the user where it is
+        imagej_path = os.path.join(this_dir, 'Fiji.app/ImageJ-win64.exe')
+        if not os.path.exists(imagej_path):
+            imagej_path = fd.askopenfilename(title="Could not find imagej, please select your imagej.exe")
+
+        # asking the user where their imagej macro is.
+        macro_path = fd.askopenfilename(title="Please select an imagej macro")
+
+        # if the user cancels either of the selections, return
+        if not macro_path or not imagej_path:
+            return
+
+        subprocess.call([
+            imagej_path,
+            "-macro",
+            macro_path
+        ])
 
     # setting up tkinter window
     root = tkinter.Tk()
