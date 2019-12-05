@@ -77,8 +77,8 @@ def generate_aggregate(filepath, plot_boundaries_filepath, multithresh_json, off
         try:
             df = df[['folder_name', 'Label', 'x', 'y', 'Area', 'Mean', 'Min', 'Max']]
         except KeyError as e:
-            print(e)
-            return
+            print(root, e)
+            continue
 
         # extracting multithresh values from a json file
         with open(multithresh_json) as f:
@@ -91,8 +91,8 @@ def generate_aggregate(filepath, plot_boundaries_filepath, multithresh_json, off
         except ValueError as e:
             # the length of multithresh list does not match the amound of images taken. 
             # skip this
-            print(e)
-            return
+            print(root, e)
+            continue
 
         to_concat.append(df)
 
@@ -158,7 +158,7 @@ def generate_fluorescence(filepath, generate_file=False):
       
     else:
         # if it does not exist, return
-        print("can't generate fluorescence file for", filepath)
+        print(f"can't generate fluorescence file for {filepath}. missing {aggregated_filepath}")
         return
 
     # a list to create a dataframe out of each of the aggregated csvs
