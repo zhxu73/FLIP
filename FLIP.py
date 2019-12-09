@@ -18,9 +18,14 @@ import image_segmentation
 # getting the directory that this file is running from
 this_dir = os.path.dirname(os.path.abspath(__file__))
 
-def headless(directory, processes=-1):
+def headless(directory, output, processes=-1):
     """
     run the full pipeline on a directory without a gui
+
+    parameters:
+        directory: input directory with ps2 data
+        output: output directory
+        processes: max number of multiprocesses. default: max available
     
     1. convert bins to pngs
     2. do image segmentation (this is where the imagej macro 
@@ -45,13 +50,14 @@ def headless(directory, processes=-1):
 
     print("generating aggregates")
     fluorescence_aggregation.generate_aggregate(
-        directory, 
+        directory,
+        output,
         os.path.join(this_dir, "static", 'Plot boundaries.xlsx'),
         os.path.join(this_dir, "static", 'multithresh.json'),
         ps2_x, 
         ps2_y
     ) # generating aggregates
-    fluorescence_aggregation.generate_fluorescence(directory, True) # generate fluorescence files
+    fluorescence_aggregation.generate_fluorescence(directory, output, True) # generate fluorescence files
 
     print("Finished processing", directory)
 
@@ -90,11 +96,6 @@ def gui():
     # root.geometry("300x125")
     # root.configure(background='white')
     root.resizable(False, False)
-
-    # configuring grid for resizable buttons
-    tkinter.Grid.columnconfigure(root, 0, weight=1)
-    for y in range(3):
-        tkinter.Grid.rowconfigure(root, y, weight=1)
 
     # creating a button for each main function
     bin_to_binary_btn = tkinter.ttk.Button(
@@ -150,17 +151,15 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--directory', help="directory to ps2 collection")
-    parser.add_argument('-p', '--processes', help="max spawnable processes used by multiprocessing")
+    parser.add_argument('-o', '--output', help="directory for output files")
+    parser.add_argument('-p', '--processes', help="max spawnable processes used by multiprocessing", default=-1)
     # parser.add_argument('-m', '--macro', help="filepath to an imagej macro", required=True)
 
     args = parser.parse_args()
 
     # if the user gave command line arguments, then use the cli, else open a gui
     if args.directory:
-        # if processes are given, use that, else, use max possible
-        processes = args.processes if args.processes else -1
-
-        headless(args.directory, processes)
+        headless(args.directory, args.output, args.processes)
 
     else:
         gui()

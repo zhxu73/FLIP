@@ -19,18 +19,28 @@ import datetime
 import json
 import multiprocessing
 import os
+from pathlib import Path
 
 import pandas as pd
 
 # getting the directory that this file is running from
 this_dir = os.path.dirname(os.path.abspath(__file__))
 
-def generate_aggregate(filepath, plot_boundaries_filepath, multithresh_json, offset_x=0, offset_y=0):
+def generate_aggregate(filepath, final_output, plot_boundaries_filepath, multithresh_json, offset_x=0, offset_y=0):
     """
     reads all csv and json files in a ps2 collection.
     outputs a csv {filepath}_aggregated.csv with the columns [folder_name, Label, x, y, Area, Mean]
 
-    filepath: a filepath to a top level directory containing ps2 data. should have a {date}_metadata.json and {date}.csv in it
+    parameters:
+        filepath: a filepath to a top level directory containing ps2 data. 
+            should have a {date}_metadata.json and {date}.csv in it
+        final_output: output directory
+        plot_boundaries_filepath: filepath to plot boundaries file
+        multithresh_json: filepath to multithresh.json
+        offset_x (float): offset for the x coordinate
+        offset_y (float): offset for the y coordinate
+
+    returns concat_df, a pandas dataframe containing aggregated data
     """
 
     to_concat = []
@@ -136,23 +146,36 @@ def generate_aggregate(filepath, plot_boundaries_filepath, multithresh_json, off
 
     # creating an output based on given filepath
     # concat_df.to_csv("_aggregated.csv", index=False)
-    concat_df.to_csv(os.path.join(filepath, f"{os.path.basename(filepath)}_aggregated.csv"), index=False)
+    #concat_df.to_csv(f"{os.path.basename(filepath)}_aggregated.csv", index=False)
+
+    if not os.path.isdir(final_output):
+        os.mkdir(final_output)
+    aggregated_file = os.path.basename(filepath) + "_aggregated.csv"
+    aggre_path = Path.cwd() / final_output / aggregated_file
+    concat_df.to_csv(aggre_path, index=False)
 
     return concat_df
 
-def generate_fluorescence(filepath, generate_file=False):
+def generate_fluorescence(filepath, final_output, generate_file=False):
     """
     Generates a csv with F0, FM, FV, and FV/FM.
+    
+    parameters:
+        filepath: a filepath to a top level directory containing ps2 data. 
+            should have {foldername}_aggregated.csv in it
+        final_output: output directory
+        generate_file (bool): determines if a file is created
 
-    generate file: a bool that determines if a file is created
-
-    returns a pandas dataframe
+    returns a pandas dataframe containing fluorescence data
     """
 
     print("\ngenerating fluorescence for", os.path.basename(filepath))
 
     # finding the aggregated file
-    aggregated_filepath = os.path.join(filepath, os.path.basename(filepath) + "_aggregated.csv")
+    # aggregated_filepath = os.path.join(filepath, os.path.basename(filepath) + "_aggregated.csv")
+    aggregated_file = os.path.basename(filepath) + "_aggregated.csv"
+    aggregated_filepath = Path.cwd() / final_output / aggregated_file
+
     if os.path.exists(aggregated_filepath):
         df = pd.read_csv(aggregated_filepath)
       
@@ -198,7 +221,11 @@ def generate_fluorescence(filepath, generate_file=False):
     fluorescence_df = fluorescence_df.sort_values(by="Plot")
 
     # output as a csv
-    fluorescence_df.to_csv(os.path.join(filepath, f'{os.path.basename(filepath)}_fluorescence.csv'), index=False)
+    # fluorescence_df.to_csv(os.path.join(filepath, f'{os.path.basename(filepath)}_fluorescence.csv'), index=False)
+
+    fluorescence_file = os.path.basename(filepath) + "_fluorescence.csv"
+    flouro_path = Path.cwd() / final_output / fluorescence_file
+    fluorescence_df.to_csv(flouro_path, index=False)
 
     return fluorescence_df
 
@@ -218,8 +245,8 @@ def single_process(filepath, plot_boundaries, multithresh_json, offset_x=0, offs
     start_time = datetime.datetime.now()
     print(f"Start Time: {start_time}")
 
-    generate_aggregate(filepath, plot_boundaries, multithresh_json, offset_x=offset_x, offset_y=offset_y)
-    generate_fluorescence(filepath)
+    generate_aggregate(filepath, filepath, plot_boundaries, multithresh_json, offset_x=offset_x, offset_y=offset_y)
+    generate_fluorescence(filepath, filepath)
     print(f"Time Elapsed: {datetime.datetime.now() - start_time}")
 
 def batch_process(filepath):
