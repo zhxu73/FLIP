@@ -35,6 +35,8 @@ def headless(directory, output, processes=-1):
     5. generate fluorescence file 
     """
 
+    
+
     print("Converting bins to pngs")
     bin_conversion.convert_dirs(directory, processes=processes) # converting all images in a dir from bin to png
 

@@ -5,7 +5,6 @@ Jacob Long
 2019-11-14
 """
 
-import fnmatch
 import multiprocessing
 import os
 

@@ -81,6 +81,7 @@ def apply_threshold(filepath):
     threshold_counts = Counter()
     averages_dict = {}
 
+    # finding how many pixels fall within each threshold
     for threshold_name, threshold in thresholds.items():
 
         average_dict = {}
@@ -135,6 +136,7 @@ def process_dir(filepath):
         os.path.join(filepath, f) 
         for f in os.listdir(filepath) 
         if f.endswith(".png")
+        if not f.endswith("101.png") # image 101 cannot be read properly, skip it
     ]
 
     image_dicts = []

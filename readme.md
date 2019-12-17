@@ -58,7 +58,7 @@ the `associate_plots.py` file will create either a .json or a .csv associating i
 ```
 python associate_plots.py
     -f <filepath>
-    -t <csv or json>
+    -t <type. csv or json>
     -xo <x_offset> (optional. 0 by default)
     -yo <y_offset> (optional. 0 by default)
 ```

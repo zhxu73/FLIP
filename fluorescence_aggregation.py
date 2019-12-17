@@ -94,8 +94,7 @@ def generate_aggregate(filepath, final_output, plot_boundaries_filepath, multith
         with open(multithresh_json) as f:
             multithresh_list = json.loads(f.read())
 
-        # print(df)
-
+        # assigning each image a multithreshold value
         try:
             df['MultiThr'] = multithresh_list
         except ValueError as e:
@@ -116,10 +115,10 @@ def generate_aggregate(filepath, final_output, plot_boundaries_filepath, multith
     plot_boundaries_df = pd.read_excel(plot_boundaries_filepath)
     plot_boundaries_df = plot_boundaries_df[['Plot', 'X Start', 'X End', 'Y Start', 'Y End']]
 
-    for index, row in plot_boundaries_df.iterrows():
 
-        # finding all records in concat df that fall inside a plots 
-        # boundaries and labeling them with that plots id
+    # finding all records in concat df that fall inside a plot's
+    # boundaries and labeling them with that plot's id
+    for index, row in plot_boundaries_df.iterrows():
         concat_df.loc[
             ((concat_df['x'] >= row['X Start']) & (concat_df['x'] < row['X End'])) &
             ((concat_df['y'] >= row['Y Start']) & (concat_df['y'] < row['Y End'])),
@@ -128,7 +127,10 @@ def generate_aggregate(filepath, final_output, plot_boundaries_filepath, multith
 
 
     # Calculating things
+    # Area x Mean x Multithresh
     concat_df['AreaXMeanXMultiThr'] = concat_df['Area'] * concat_df['Mean'] * concat_df['MultiThr']
+
+    # Area x Multithresh
     concat_df['AreaXMultiThr'] = concat_df['Area'] * concat_df['MultiThr']
 
     for label in set(concat_df['Label']):
@@ -138,7 +140,10 @@ def generate_aggregate(filepath, final_output, plot_boundaries_filepath, multith
         # which records to select from concat_df
         chosen_records = concat_df['Label'] == label
 
+        # Sum(Area x Mean x Multithresh)
         concat_df.loc[chosen_records, 'Sum AreaXMeanXMultiThr'] = concat_df.loc[chosen_records, 'AreaXMeanXMultiThr'].sum()
+
+        # Sum(Area x Multithresh)
         concat_df.loc[chosen_records, 'Sum AreaXMultiThr'] = concat_df.loc[chosen_records, 'AreaXMultiThr'].sum()
     
     concat_df['Sum_AreaXMeanXMultiThr_over_Sum_AreaXMultiThr'] = concat_df['Sum AreaXMeanXMultiThr'] / concat_df['Sum AreaXMultiThr']
@@ -191,7 +196,14 @@ def generate_fluorescence(filepath, final_output, generate_file=False):
     for plot in set(df['Plot']):
 
         # the first value from the second picture
-        F0 = list(df.loc[df['Plot'] == plot, 'Sum_AreaXMeanXMultiThr_over_Sum_AreaXMultiThr'])[5] 
+        try:
+            F0 = list(df.loc[df['Plot'] == plot, 'Sum_AreaXMeanXMultiThr_over_Sum_AreaXMultiThr'])[5]
+        except IndexError as e:
+            # an IndexError will be thrown if no records were found for a given plot.
+            # this could happen if the plot was not listed in the Plot boundaries.xlsx
+            # and the previous step has been run
+            print(f'No data found in plot {plot}.', e)
+            continue
         
         # extracting image number from the label string and converting it to an int for filtering
         df['img_num'] = df['Label'].str.slice(start=-8, stop=-4).astype(int)
@@ -202,8 +214,6 @@ def generate_fluorescence(filepath, final_output, generate_file=False):
             ((df['img_num'] > 0) & (df['img_num'] <= 46)),
             'Sum_AreaXMeanXMultiThr_over_Sum_AreaXMultiThr'
         ].max()
-
-        FM = df.loc[df['Plot'] == plot, 'Sum_AreaXMeanXMultiThr_over_Sum_AreaXMultiThr'].max()
 
         FV = FM - F0
 
