@@ -153,7 +153,7 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--directory', help="directory to ps2 collection")
-    parser.add_argument('-o', '--output', help="directory for output files")
+    parser.add_argument('-o', '--output', help="directory for output files.")
     parser.add_argument('-p', '--processes', help="max spawnable processes used by multiprocessing", default=-1)
     # parser.add_argument('-m', '--macro', help="filepath to an imagej macro", required=True)
 
