@@ -40,7 +40,7 @@ def headless(directory, output, processes=-1):
     print("Converting bins to pngs")
     bin_conversion.convert_dirs(directory, processes=processes) # converting all images in a dir from bin to png
 
-    print("segmenting image")
+    print("segmenting images")
     # imagej_macro(args.macro, args.directory) # old fiji macro
     image_segmentation.process_collection(directory) # new python macro
 
