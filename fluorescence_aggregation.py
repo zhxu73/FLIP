@@ -45,70 +45,77 @@ def generate_aggregate(filepath, final_output, plot_boundaries_filepath, multith
 
     to_concat = []
 
-    for root, dirs, files in os.walk(filepath):
+    with os.scandir(filepath) as it:
+        for entry in it:
+            root = entry.path
 
-        # we dont want to check the parent directory
-        if root == filepath:
-            continue
+            # skip non-dir in children of subdir
+            if not entry.is_dir():
+                continue
 
-        # if one of these two file does not exist, skip the folder
-        try:
-            json_dir = [f for f in files if f.endswith("_metadata.json")][0]
-            # csv_dir = [f for f in files if f.endswith(".csv")][0]
-            csv_dir = [f for f in files if f.endswith(".csv")][0]
-                
-        except:
-            print(f"Skipping {root}. json or csv not found")
-            continue
+            # data files in subdir
+            files = [entry.name for entry in os.scandir(entry.path) if entry.is_file]
 
-        # loading in json data to a dictionary
-        with open(os.path.join(root, json_dir)) as f:
-            json_dict = json.load(f)
+            # if one of these two file does not exist, skip the folder
+            try:
+                json_dir = [f for f in files if f.endswith("_metadata.json")][0]
+                # csv_dir = [f for f in files if f.endswith(".csv")][0]
+                csv_dir = [f for f in files if f.endswith(".csv")][0]
+                    
+            except:
+                print(f"Skipping {root}. json or csv not found")
+                continue
 
-        # extracting x and y coordinates
-        try:
-            x = json_dict['lemnatec_measurement_metadata']['gantry_system_variable_metadata']['position x [m]'] 
-            y = json_dict['lemnatec_measurement_metadata']['gantry_system_variable_metadata']['position y [m]'] 
+            # loading in json data to a dictionary
+            with open(os.path.join(root, json_dir)) as f:
+                json_dict = json.load(f)
 
-        except:
-            print(f"invalid json file found in {root}")
-            continue
+            # extracting x and y coordinates
+            try:
+                x = json_dict['lemnatec_measurement_metadata']['gantry_system_variable_metadata']['position x [m]'] 
+                y = json_dict['lemnatec_measurement_metadata']['gantry_system_variable_metadata']['position y [m]'] 
 
-        # reading the csv
-        df = pd.read_csv(os.path.join(root, csv_dir))
+            except:
+                print(f"invalid json file found in {root}")
+                continue
 
-        # creating columns for x and y from json and a column for folder name 
-        # adding in offsets
-        df['x'] = float(x) + offset_x
-        df['y'] = float(y) + offset_y
-        df['folder_name'] = os.path.basename(root)
+            # reading the csv
+            df = pd.read_csv(os.path.join(root, csv_dir))
 
-        # sorting columns
-        try:
-            df = df[['folder_name', 'Label', 'x', 'y', 'Area', 'Mean', 'Min', 'Max']]
-        except KeyError as e:
-            print(root, e)
-            continue
+            # creating columns for x and y from json and a column for folder name 
+            # adding in offsets
+            df['x'] = float(x) + offset_x
+            df['y'] = float(y) + offset_y
+            df['folder_name'] = os.path.basename(root)
 
-        # extracting multithresh values from a json file
-        with open(multithresh_json) as f:
-            multithresh_list = json.loads(f.read())
+            # sorting columns
+            try:
+                df = df[['folder_name', 'Label', 'x', 'y', 'Area', 'Mean', 'Min', 'Max']]
+            except KeyError as e:
+                print(root, e)
+                continue
 
-        # assigning each image a multithreshold value
-        try:
-            df['MultiThr'] = multithresh_list
-        except ValueError as e:
-            # the length of multithresh list does not match the amound of images taken. 
-            # skip this
-            print(root, e)
-            continue
+            # extracting multithresh values from a json file
+            with open(multithresh_json) as f:
+                multithresh_list = json.loads(f.read())
 
-        to_concat.append(df)
+            # assigning each image a multithreshold value
+            try:
+                df['MultiThr'] = multithresh_list
+            except ValueError as e:
+                # the length of multithresh list does not match the amound of images taken. 
+                # skip this
+                print(root, e)
+                continue
+            df['Plot'] = -1
+
+            to_concat.append(df)
 
     # making sure there are objects in the list to concat
     if to_concat:
         concat_df = pd.concat(to_concat)
     else:
+        print("No object in the list to concat")
         return
 
     # reading a file defining plot boundaries
@@ -119,11 +126,12 @@ def generate_aggregate(filepath, final_output, plot_boundaries_filepath, multith
     # finding all records in concat df that fall inside a plot's
     # boundaries and labeling them with that plot's id
     for index, row in plot_boundaries_df.iterrows():
-        concat_df.loc[
+        temp = concat_df.loc[
             ((concat_df['x'] >= row['X Start']) & (concat_df['x'] < row['X End'])) &
             ((concat_df['y'] >= row['Y Start']) & (concat_df['y'] < row['Y End'])),
             'Plot'
-        ] = int(row['Plot'])
+        ]
+        temp = int(row['Plot'])
 
 
     # Calculating things
@@ -180,6 +188,8 @@ def generate_fluorescence(filepath, final_output, generate_file=False):
     # aggregated_filepath = os.path.join(filepath, os.path.basename(filepath) + "_aggregated.csv")
     aggregated_file = os.path.basename(filepath) + "_aggregated.csv"
     aggregated_filepath = Path.cwd() / final_output / aggregated_file
+    print("filepath: {}".format(filepath))
+    print("aggregated_filepath: {}".format(aggregated_filepath))
 
     if os.path.exists(aggregated_filepath):
         df = pd.read_csv(aggregated_filepath)
@@ -203,6 +213,8 @@ def generate_fluorescence(filepath, final_output, generate_file=False):
             # this could happen if the plot was not listed in the Plot boundaries.xlsx
             # and the previous step has been run
             print(f'No data found in plot {plot}.', e)
+            import sys
+            sys.exit()
             continue
         
         # extracting image number from the label string and converting it to an int for filtering
