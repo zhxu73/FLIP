@@ -107,6 +107,8 @@ def generate_aggregate(filepath, final_output, plot_boundaries_filepath, multith
                 # skip this
                 print(root, e)
                 continue
+            
+            # place holder
             df['Plot'] = -1
 
             to_concat.append(df)
@@ -126,12 +128,11 @@ def generate_aggregate(filepath, final_output, plot_boundaries_filepath, multith
     # finding all records in concat df that fall inside a plot's
     # boundaries and labeling them with that plot's id
     for index, row in plot_boundaries_df.iterrows():
-        temp = concat_df.loc[
+        concat_df.loc[
             ((concat_df['x'] >= row['X Start']) & (concat_df['x'] < row['X End'])) &
             ((concat_df['y'] >= row['Y Start']) & (concat_df['y'] < row['Y End'])),
             'Plot'
-        ]
-        temp = int(row['Plot'])
+        ] = int(row['Plot'])
 
 
     # Calculating things
