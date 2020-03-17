@@ -45,65 +45,74 @@ def generate_aggregate(filepath, final_output, plot_boundaries_filepath, multith
 
     to_concat = []
 
-    for root, dirs, files in os.walk(filepath):
+    with os.scandir(filepath) as it:
+        for entry in it:
+            root = entry.path
 
-        # we dont want to check the parent directory
-        if root == filepath:
-            continue
+            # skip non-dir in children of subdir
+            if not entry.is_dir():
+                continue
 
-        # if one of these two file does not exist, skip the folder
-        try:
-            json_dir = [f for f in files if f.endswith("_metadata.json")][0]
-            # csv_dir = [f for f in files if f.endswith(".csv")][0]
-            csv_dir = [f for f in files if f.endswith(".csv")][0]
-                
-        except:
-            print(f"Skipping {root}. json or csv not found")
-            continue
+            # data files in subdir
+            files = [entry.name for entry in os.scandir(entry.path) if entry.is_file]
 
-        # loading in json data to a dictionary
-        with open(os.path.join(root, json_dir)) as f:
-            json_dict = json.load(f)
+            # we dont want to check the parent directory
+            if root == filepath:
+                continue
 
-        # extracting x and y coordinates
-        try:
-            x = json_dict['lemnatec_measurement_metadata']['gantry_system_variable_metadata']['position x [m]'] 
-            y = json_dict['lemnatec_measurement_metadata']['gantry_system_variable_metadata']['position y [m]'] 
+            # if one of these two file does not exist, skip the folder
+            try:
+                json_dir = [f for f in files if f.endswith("_metadata.json")][0]
+                # csv_dir = [f for f in files if f.endswith(".csv")][0]
+                csv_dir = [f for f in files if f.endswith(".csv")][0]
+                    
+            except:
+                print(f"Skipping {root}. json or csv not found")
+                continue
 
-        except:
-            print(f"invalid json file found in {root}")
-            continue
+            # loading in json data to a dictionary
+            with open(os.path.join(root, json_dir)) as f:
+                json_dict = json.load(f)
 
-        # reading the csv
-        df = pd.read_csv(os.path.join(root, csv_dir))
+            # extracting x and y coordinates
+            try:
+                x = json_dict['lemnatec_measurement_metadata']['gantry_system_variable_metadata']['position x [m]'] 
+                y = json_dict['lemnatec_measurement_metadata']['gantry_system_variable_metadata']['position y [m]'] 
 
-        # creating columns for x and y from json and a column for folder name 
-        # adding in offsets
-        df['x'] = float(x) + offset_x
-        df['y'] = float(y) + offset_y
-        df['folder_name'] = os.path.basename(root)
+            except:
+                print(f"invalid json file found in {root}")
+                continue
 
-        # sorting columns
-        try:
-            df = df[['folder_name', 'Label', 'x', 'y', 'Area', 'Mean', 'Min', 'Max']]
-        except KeyError as e:
-            print(root, e)
-            continue
+            # reading the csv
+            df = pd.read_csv(os.path.join(root, csv_dir))
 
-        # extracting multithresh values from a json file
-        with open(multithresh_json) as f:
-            multithresh_list = json.loads(f.read())
+            # creating columns for x and y from json and a column for folder name 
+            # adding in offsets
+            df['x'] = float(x) + offset_x
+            df['y'] = float(y) + offset_y
+            df['folder_name'] = os.path.basename(root)
 
-        # assigning each image a multithreshold value
-        try:
-            df['MultiThr'] = multithresh_list
-        except ValueError as e:
-            # the length of multithresh list does not match the amound of images taken. 
-            # skip this
-            print(root, e)
-            continue
+            # sorting columns
+            try:
+                df = df[['folder_name', 'Label', 'x', 'y', 'Area', 'Mean', 'Min', 'Max']]
+            except KeyError as e:
+                print(root, e)
+                continue
 
-        to_concat.append(df)
+            # extracting multithresh values from a json file
+            with open(multithresh_json) as f:
+                multithresh_list = json.loads(f.read())
+
+            # assigning each image a multithreshold value
+            try:
+                df['MultiThr'] = multithresh_list
+            except ValueError as e:
+                # the length of multithresh list does not match the amound of images taken. 
+                # skip this
+                print(root, e)
+                continue
+
+            to_concat.append(df)
 
     # making sure there are objects in the list to concat
     if to_concat:
