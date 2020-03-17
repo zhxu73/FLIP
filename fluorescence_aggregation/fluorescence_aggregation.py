@@ -45,20 +45,19 @@ def generate_aggregate(filepath, final_output, plot_boundaries_filepath, multith
 
     to_concat = []
 
+    root = filepath
     with os.scandir(filepath) as it:
         for entry in it:
-            root = entry.path
-
-            # skip non-dir in children of subdir
+            files = []
+            # skip non-dir
             if not entry.is_dir():
                 continue
-
-            # data files in subdir
-            files = [entry.name for entry in os.scandir(entry.path) if entry.is_file]
-
-            # we dont want to check the parent directory
-            if root == filepath:
-                continue
+            print(entry.name)
+            # scan files in subdir
+            with os.scandir(entry.path) as subdir:
+                for subdir_entry in subdir:
+                    if subdir_entry.is_file():
+                        files.append("{}/{}".format(entry.name, subdir_entry.name))
 
             # if one of these two file does not exist, skip the folder
             try:
