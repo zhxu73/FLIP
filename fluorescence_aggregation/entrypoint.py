@@ -21,7 +21,6 @@ def parse_args():
 def main():
     args = parse_args()
 
-    # getting the directory that this file is running from
     this_dir = os.path.dirname(os.path.abspath(__file__))
 
     # getting offsets

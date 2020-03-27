@@ -21,6 +21,7 @@ def main():
 
     # segmenting images using new python macro
     print("segmenting images")
+
     image_segmentation.process_collection(args.directory, args.processes)
 
 if __name__ == "__main__":
