@@ -14,7 +14,6 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--directory', required=True, help="directory to ps2 collection")
     parser.add_argument('-o', '--output', required=True, help="directory for output files.")
-    parser.add_argument('-p', '--processes', help="max spawnable processes used by multiprocessing", default=-1)
 
     args = parser.parse_args()
     return args
