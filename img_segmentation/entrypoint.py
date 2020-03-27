@@ -7,14 +7,11 @@ Entry point for segmenting image
 import image_segmentation
 import argparse
 
-# getting the directory that this file is running from
-this_dir = os.path.dirname(os.path.abspath(__file__))
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--directory', required=True, help="directory to ps2 collection")
-    parser.add_argument('-o', '--output', required=True, help="directory for output files.")
-    parser.add_argument('-p', '--processes', help="max spawnable processes used by multiprocessing", default=-1)
+    parser.add_argument('-d', '--directory', required=True, help="directory to ps2 collection, also the output directory")
+    parser.add_argument('-p', '--processes', type=int, help="max spawnable processes used by multiprocessing", default=-1)
 
     args = parser.parse_args()
     return args
@@ -24,7 +21,8 @@ def main():
 
     # segmenting images using new python macro
     print("segmenting images")
-    image_segmentation.process_collection(args.directory)
+
+    image_segmentation.process_collection(args.directory, args.processes)
 
 if __name__ == "__main__":
     main()

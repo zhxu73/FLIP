@@ -150,7 +150,7 @@ def process_dir(filepath):
     df.to_csv(output_dir)
     print(output_dir, "created")
 
-def process_collection(filepath):
+def process_collection(filepath, processes=-1):
     """
     finds all directories in a ps2 collection 
     and runs process_dir() on each of them
@@ -163,7 +163,9 @@ def process_collection(filepath):
         # getting each directory in the main folder
         directories = [os.path.join(root, d) for d in dirs]
 
-        with multiprocessing.Pool(multiprocessing.cpu_count()) as p:
+        if processes < 1:
+            processes = multiprocessing.cpu_count()
+        with multiprocessing.Pool(processes) as p:
             p.map(process_dir, directories)
 
         break # make sure we only go one level deep

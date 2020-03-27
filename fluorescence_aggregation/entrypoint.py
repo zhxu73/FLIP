@@ -9,20 +9,19 @@ import argparse
 import os
 import json
 
-# getting the directory that this file is running from
-this_dir = os.path.dirname(os.path.abspath(__file__))
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--directory', required=True, help="directory to ps2 collection")
     parser.add_argument('-o', '--output', required=True, help="directory for output files.")
-    parser.add_argument('-p', '--processes', help="max spawnable processes used by multiprocessing", default=-1)
 
     args = parser.parse_args()
     return args
 
 def main():
     args = parse_args()
+
+    this_dir = os.path.dirname(os.path.abspath(__file__))
 
     # getting offsets
     with open(os.path.join(this_dir, "static", "ps2", "sensor_fixed_metadata.json"), 'r') as f:
